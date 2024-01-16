@@ -66,8 +66,8 @@ export default {
     },
     redirectTo(carID) {
       let baseUrl = window.location.href;
-      const url = `${baseUrl}auth/login?carid=${carID}`;
-      window.location.href = url;
+      const inurl = `${baseUrl}auth/login?carid=${carID}`;
+      window.location.href = inurl;
     }
   }
 };
