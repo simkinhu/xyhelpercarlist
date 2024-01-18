@@ -14,14 +14,6 @@
     </n-grid-item>
   </n-grid>
   <n-divider></n-divider>
-  <n-space>
-    <n-text class="total">共：{{ total }} 条数据</n-text>
-    <n-button size="small" type="info">
-      Info
-    </n-button>
-
-  </n-space>
-
 </template>
 
 <script lang="ts">
