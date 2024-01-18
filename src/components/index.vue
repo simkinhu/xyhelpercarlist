@@ -2,8 +2,7 @@
   <n-global-style/>
   <n-grid x-gap="12" :cols="1">
     <n-gi>
-      <div class="light-green" v-html="notice">
-      </div>
+      <div class="light-green" v-html="notice"></div>
     </n-gi>
   </n-grid>
   <n-divider></n-divider>
@@ -34,40 +33,61 @@ export default {
       itemsfree: [],
       itemsplus: [],
       notice: "",
-      total:0,
-      page: 1
+      total: 0,
+      page: 1,
+      isLoading: false,
+      hasMoreData: true,
     };
   },
   mounted() {
     this.fetchData();
+    window.addEventListener('scroll', this.handleScroll);
   },
   methods: {
     fetchData() {
+      if (!this.hasMoreData || this.isLoading) return; // 如果没有更多数据或正在加载，则不执行任何操作
+
+      this.isLoading = true;
       axios.post('https://free-gpt.club/carpage', {
         page: this.page,
-        size: 6
+        size: 60
       })
           .then(response => {
-            console.log(response);
+            // 处理返回的数据
+            if (response.data.data.list === null) {
+              this.hasMoreData = false;
+              return;
+            }
             this.notice = response.data.notice;
-            this.total = response.data.data.pagination.total;
-            let baseUrl = window.location.href;
-            const allItems = response.data.data.list.map(item => {
+            let baseUrl = window.location.href.split('#')[0];
+            const newItems = response.data.data.list.map(item => {
               let iconUrl = `${baseUrl}endpoint?carid=${item.carID}`;
-              iconUrl = encodeURIComponent(iconUrl);
-              return {...item, iconurl: iconUrl};
+              return {...item, iconurl: encodeURIComponent(iconUrl)};
             });
-            console.log(allItems);
-            this.itemsfree = allItems;
+
+            this.itemsfree = [...this.itemsfree, ...newItems];
+            this.page += 1;
           })
           .catch(error => {
             console.error('请求错误:', error);
+          })
+          .finally(() => {
+            this.isLoading = false;
           });
+    },
+    handleScroll() {
+      const nearBottomOfPage = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+      if (nearBottomOfPage && !this.isLoading) {
+        this.fetchData();
+      }
     },
     redirectTo(carID) {
       let baseUrl = window.location.href;
       const inurl = `${baseUrl}auth/login?carid=${carID}`;
       window.location.href = inurl;
+    },
+    beforeDestroy() {
+      window.removeEventListener('scroll', this.handleScroll);
     }
   }
 };
