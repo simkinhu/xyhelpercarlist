@@ -11,7 +11,7 @@ export default defineConfig({
     transpileDependencies: true,
     //打包后不生成.map文件
     productionSourceMap: false,
-    publicPath: "/list",
+    base: "/list",
     devServer: {
         proxy: {
             "/carpage": {
