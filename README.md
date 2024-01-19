@@ -9,7 +9,7 @@
 curl -sSfL https://raw.githubusercontent.com/simkinhu/xyhelpercarlist/master/quick-install/quick-list.sh | bash
 ```
 
-![image](/home.png)
+![image](https://github.com/simkinhu/xyhelpercarlist/blob/master/quick-install/home.jpg?raw=true)
 
 ### 使用前端框架
 ```html
