@@ -3,12 +3,13 @@
 
 
 ## 一键替换 xyhelper-share 前端界面
-无需编译，在 `` chatgpt-share ` 目录下执行以下脚本即可，源码已开源可随意更改。
+### 无需编译，在 "chatgpt-share" 目录下执行以下脚本即可，源码已开源可随意更改。
 
 ```shell
 curl -sSfL https://raw.githubusercontent.com/simkinhu/xyhelpercarlist/master/quick-install/quick-list.sh | bash
 ```
 
+![image](/home.png)
 
 ### 使用前端框架
 ```html
