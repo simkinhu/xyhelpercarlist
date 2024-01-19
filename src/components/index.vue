@@ -14,7 +14,6 @@
     </n-grid-item>
   </n-grid>
   <n-divider></n-divider>
-
 </template>
 
 <script lang="ts">
