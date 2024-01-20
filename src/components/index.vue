@@ -6,7 +6,7 @@
     </n-gi>
   </n-grid>
   <n-divider></n-divider>
-  <n-grid x-gap="10" y-gap="10" cols="2 s:3 m:4 l:5 xl:6 2xl:7" responsive="screen">
+  <n-grid x-gap="10" y-gap="10" cols="2 s:3 m:4 l:5 xl:5 2xl:6" responsive="screen">
     <n-grid-item class="cardclss" v-for="item in itemslist" :key="item.carID">
       <n-card :title="item.carID" @click="redirectTo(item.carID)">
         <img class="plusicon" :src="'https://img.closeai.biz/endpoint?url=' + item.iconurl">
@@ -41,7 +41,7 @@ export default {
       if (!this.hasMoreData || this.isLoading) return; // 如果没有更多数据或正在加载，则不执行任何操作
 
       this.isLoading = true;
-      axios.post('/carpage', {
+      axios.post('https://free-gpt.club/carpage', {
         page: this.page,
         size: 48
       })
