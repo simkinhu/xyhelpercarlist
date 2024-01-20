@@ -6,7 +6,7 @@
     </n-gi>
   </n-grid>
   <n-divider></n-divider>
-  <n-grid x-gap="12" y-gap="12" cols="2 400:4 600:6">
+  <n-grid x-gap="10" y-gap="10" cols="2 s:3 m:4 l:5 xl:6 2xl:7" responsive="screen">
     <n-grid-item class="cardclss" v-for="item in itemslist" :key="item.carID">
       <n-card :title="item.carID" @click="redirectTo(item.carID)">
         <img class="plusicon" :src="'https://img.closeai.biz/endpoint?url=' + item.iconurl">
@@ -14,6 +14,7 @@
     </n-grid-item>
   </n-grid>
   <n-divider></n-divider>
+
 </template>
 
 <script lang="ts">
@@ -45,7 +46,6 @@ export default {
         size: 48
       })
           .then(response => {
-            // 处理返回的数据
             if (response.data.data.list === null) {
               this.hasMoreData = false;
               return;
@@ -57,7 +57,6 @@ export default {
               let iconUrl = `${baseUrl}/endpoint?carid=${carname}`;
               return {...item, iconurl: encodeURIComponent(iconUrl)};
             });
-
             this.itemslist = [...this.itemslist, ...newItems];
             this.page += 1;
           })
