@@ -4,7 +4,7 @@
 
 默认加载48条数据，下拉滚动加载，/src/components/index.vue 第45行可自行更改加载条数。
 
-提示：执行前过后list目录下都会删除，请做好备份，docker有无映射目录都不影响。
+提示：执行过后list目录下都会删除，请做好备份，docker有无映射目录都不影响。
 
 
 ## 一键快速替换前端页面：
@@ -15,6 +15,11 @@ curl -sSfL https://raw.githubusercontent.com/simkinhu/xyhelpercarlist/master/qui
 ![Image text](https://github.com/simkinhu/xyhelpercarlist/blob/master/quick-install/home.jpg?raw=true)
 
 
+## 公告配置
+在管理后台-系统设置-参数配置-参数列表中新增参数notice，值为公告内容，支持 html 标签
+
+![Image text](https://chatgpt-share-server.xyhelper.cn/assets/notice1-U7IuKWIa.png)
+![Image text](https://chatgpt-share-server.xyhelper.cn/assets/notice2-umTyfMe7.png)
 
 ### 使用前端框架
 ```html
