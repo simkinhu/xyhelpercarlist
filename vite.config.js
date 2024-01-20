@@ -15,7 +15,7 @@ export default defineConfig({
     devServer: {
         proxy: {
             "/carpage": {
-                target: "https://free-gpt.club",
+                target: "http://127.0.0.1:8300",
                 changeOrigin: true,
                 ws: true,
                 autoRewrite: true,
