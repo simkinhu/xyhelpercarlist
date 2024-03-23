@@ -15,7 +15,7 @@
 curl -sSfL https://raw.githubusercontent.com/simkinhu/xyhelpercarlist/master/quick-install/quick-list.sh | bash
 ```
 
-![Image text](https://github.com/simkinhu/xyhelpercarlist/blob/master/quick-install/home.jpg?raw=true)
+![Image text](https://github.com/simkinhu/xyhelpercarlist/blob/master/quick-install/home.png?raw=true)
 
 
 ## 公告配置
