@@ -40,6 +40,8 @@
   margin-top: 10px;
   position: relative;
   padding-left: 20px;
+  color: gray;
+  font-size: 12px;
 }
 
 .message-with-dot:before {
