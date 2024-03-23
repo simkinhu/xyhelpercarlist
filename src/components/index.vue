@@ -7,7 +7,7 @@
   </n-grid>
   <n-grid x-gap="10" y-gap="10" cols="1 s:3 m:4 l:5 xl:5 2xl:6" responsive="screen">
     <n-grid-item class="cardclss" v-for="item in itemslist" :key="item.carID">
-      <n-card size="small" bordered="false" content-style="box-class" content-class="box-class">
+      <n-card size="small" bordered="false" content-style="box-class" content-class="box-class"  @click="redirectTo(item.carID)">
         <n-button text-color="white" :color="item.isPlus === 0 ? '#19c37d' : '#ab68ff'" type="tertiary" size="small">
           {{ item.label }}
         </n-button>
