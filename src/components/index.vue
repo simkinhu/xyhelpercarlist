@@ -172,7 +172,7 @@ export default {
               return;
             }
             this.notice = response.data.notice;
-            let baseUrl = window.location.href;
+            let baseUrl =  window.location.origin;
             let promises = response.data.data.list.map(item => {
               let carname = encodeURIComponent(`${item.carID}`);
               let endpointUrl = `${baseUrl}/endpoint?carid=${carname}`;
