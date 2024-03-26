@@ -218,7 +218,6 @@ export default {
                 }
                 return 0;
               });
-              console.log(this.itemslist);
               this.page += 1;
             })
           })
