@@ -16,6 +16,8 @@
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
+    "@arco-design/web-vue": "^2.55.0",
+    "@vicons/ionicons5": "^0.12.0",
     "@vitejs/plugin-vue": "^4.5.2",
     "naive-ui": "^2.37.3",
     "vfonts": "^0.0.3",

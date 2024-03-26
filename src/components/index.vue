@@ -1,33 +1,41 @@
 <template>
-  <n-global-style/>
-  <n-grid class="notice" x-gap="12" :cols="1">
-    <n-gi>
-      <div class="light-green" v-html="notice"></div>
-    </n-gi>
-  </n-grid>
-  <n-grid x-gap="10" y-gap="10" cols="1 s:3 m:4 l:5 xl:6 2xl:6" responsive="screen">
-    <n-grid-item class="cardclss" v-for="item in itemslist" :key="item.carID">
-      <n-card size="small" bordered="false" content-style="box-class" content-class="box-class"
-              @click="redirectTo(item.carID)">
-        <n-button text-color="white" :color="item.isPlus === false ? '#19c37d' : '#ab68ff'" type="tertiary"
-                  size="small">
-          {{ item.label }}
-        </n-button>
-        <n-text class="title">{{ item.carID }}</n-text>
-        <div class="message-with-dot" :style="{ '--dot-color': item.color }">
-          节点状态：{{ item.message }}
-        </div>
-        <n-progress
-            type="line"
-            :show-indicator="false"
-            :color=item.color
-            :percentage=item.bai
-            rail-color="#dbdbdb"
-        />
-      </n-card>
-    </n-grid-item>
-  </n-grid>
+  <n-config-provider :theme="theme">
+    <n-global-style/>
 
+    <n-card class="notice" size="small">
+      <n-switch v-model:value="active" size="small">
+        <template #checked-icon>
+          <n-icon :component="Sparkles"/>
+        </template>
+        <template #unchecked-icon>
+          <n-icon :component="SunnySharp"/>
+        </template>
+      </n-switch>
+      <div v-html="notice"></div>
+    </n-card>
+
+
+    <n-grid x-gap="10" y-gap="10" cols="1 s:3 m:4 l:5 xl:6 2xl:6" responsive="screen">
+
+      <n-grid-item class="cardclss" v-for="item in itemslist" :key="item.carID">
+        <n-card size="small" bordered="false" content-style="box-class" content-class="box-class"
+                @click="redirectTo(item.carID)">
+          <n-text class="title">{{ item.carID }}</n-text>
+
+          <n-badge :color=item.labelColor :value=item.label :offset="[30, -12]"></n-badge>
+
+          <div class="message-with-dot">
+            <a-progress size="mini" status='success' :percent=item.bai :size="mini" :color=item.color></a-progress>
+            节点状态：{{ item.message }}
+          </div>
+
+        </n-card>
+      </n-grid-item>
+
+
+    </n-grid>
+
+  </n-config-provider>
 </template>
 <style>
 #app {
@@ -36,53 +44,33 @@
 
 .n-button {
   border-radius: 7px;
+  float: right;
 }
 
 .n-gradient-text {
   margin-top: 10px;
 }
 
-.n-progress {
-  margin-top: 10px;
-}
-
-.progress-container {
-  width: 100%; /* Full width */
-  background-color: #e0e0e0; /* Grey background */
-  border-radius: 5px; /* Rounded corners */
-  overflow: hidden; /* Clip the progress inside the container */
-}
-
-.progress {
-  height: 8px; /* The height of the progress bar */
-  background-color: #19c37d; /* Green background */
-  width: 0%; /* Width starting at 0% */
-  border-radius: 5px; /* Rounded corners */
-  transition: width 0.5s; /* Smooth transition for width changes */
-}
-
-
 .message-with-dot {
   margin-top: 10px;
   position: relative;
-  padding-left: 20px;
   color: gray;
   font-size: 12px;
 }
 
-.message-with-dot:before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  background: var(--dot-color);
-  border: 1px #c9c9c9 solid;
+.n-switch {
+  top: 0;
+
+  float: right;
 }
 
+.n-badge {
+  float: right;
+}
+
+.n-badge .n-badge-sup {
+  border-radius: 5px;
+}
 
 .box-class {
   border-radius: 10px !important;
@@ -103,18 +91,13 @@
   font-size: 10px;
 }
 
-.n-button span {
-  font-weight: 800;
-}
-
 .cardclss .title {
   font-weight: 600;
-  margin-left: 5px;
 }
 
 .notice {
-  color: #67c23a;
-  background-color: #eff4f9 !important;
+  max-width: 100%;
+  color: var(--n-title-text-color);
   border-radius: 10px !important;
   margin-bottom: 20px;
 }
@@ -126,23 +109,63 @@
 }
 
 .cardclss {
-  background-color: #eff4f9 !important;
   border-radius: 10px !important;
 }
 
 .cardclss .n-card {
+  max-width: 100%;
   border: 0 !important;
-  color: black;
   text-align: left;
   --n-close-border-radius: 10px !important;
-  background: none;
 }
 
 </style>
 <script lang="ts">
 import axios from 'axios';
+import {darkTheme} from 'naive-ui'
+import type {GlobalTheme} from 'naive-ui'
+import {Sparkles, SunnySharp} from '@vicons/ionicons5'
 
 export default {
+  computed: {
+    Sparkles() {
+      return Sparkles
+    },
+    SunnySharp() {
+      return SunnySharp
+    }
+  },
+  setup() {
+    const theme = ref<GlobalTheme | null>(null)
+    const active = ref(false)
+    // 设置主题
+    const setTheme = () => {
+      const now = new Date()
+      const hours = now.getHours()
+      if (hours >= 19 || hours < 7) { // 晚上19点到次日7点为深色主题
+        theme.value = darkTheme
+        active.value = true
+      } else { // 其他时间为浅色主题
+        theme.value = null
+        active.value = false
+      }
+    }
+    onMounted(() => {
+      setTheme()
+    })
+
+    // 监听开关改变,手动切换主题
+    watch(active, (newValue) => {
+      theme.value = newValue ? darkTheme : null
+    })
+
+    return {
+      theme,
+      active,
+      Sparkles,
+      SunnySharp
+    }
+  },
   data() {
     return {
       itemslist: [],
@@ -154,7 +177,12 @@ export default {
       hasMoreData: true,
     };
   },
+
   mounted() {
+    const currentHour = new Date().getHours();
+    if (currentHour >= 18 || currentHour < 6) {
+      this.isDarkTheme = true;
+    }
     this.fetchData();
     window.addEventListener('scroll', this.handleScroll);
   },
@@ -172,7 +200,7 @@ export default {
               return;
             }
             this.notice = response.data.notice;
-            let baseUrl =  window.location.origin;
+            let baseUrl = window.location.origin;
             let promises = response.data.data.list.map(item => {
               let carname = encodeURIComponent(`${item.carID}`);
               let endpointUrl = `${baseUrl}/endpoint?carid=${carname}`;
@@ -195,7 +223,16 @@ export default {
 
               return Promise.all([endpointPromise, statusPromise]).then(([endpointData, statusData]) => {
                 function replaceStopRunning(text) {
-                  return text.replace("PLUS停运｜", "").replace("TEAM停运｜", "").replace("停运｜", "").replace("|", "-").replace("green","#19c37d").replace("yellow","#0f6844").replace("red","black");
+                  return text.replace("PLUS停运｜", "")
+                      .replace("TEAM停运｜", "")
+                      .replace("停运｜", "")
+                      .replace("|", "-")
+                      .replace("green", "#19c37d")
+                      .replace("yellow", "#0f6844")
+                      .replace("red", "black")
+                      .replace("PLUS", "4.0")
+                      .replace("blue", "#19c37d")
+                      .replace("purple", "#0f6844");
                 }
 
                 for (let key in endpointData) {
@@ -203,7 +240,7 @@ export default {
                     endpointData[key] = replaceStopRunning(endpointData[key]);
                   }
                 }
-                let bai = 100 - (statusData.count / 100) * 100;
+                let bai = statusData.count / 100;
                 return {...item, ...endpointData, ...statusData, bai: bai.toFixed(2)}; // 将百分比保留两位小数
               });
             });
@@ -218,7 +255,6 @@ export default {
                 }
                 return 0;
               });
-              console.log(this.itemslist);
               this.page += 1;
             })
           })

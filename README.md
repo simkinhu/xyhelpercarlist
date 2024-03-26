@@ -15,12 +15,15 @@
 
 2024-03-27 增加进度条与颜色修改！
 
+2024-03-28 修改UI颜色，增加自动深浅模式，修改进度条；
+
 ## 一键快速替换前端页面：
 ```shell
 curl -sSfL https://raw.githubusercontent.com/simkinhu/xyhelpercarlist/master/quick-install/quick-list.sh | bash
 ```
 
-![Image text](https://github.com/simkinhu/xyhelpercarlist/blob/master/quick-install/home.png?raw=true)
+![Image text](https://github.com/simkinhu/xyhelpercarlist/blob/master/quick-install/home1.jpg?raw=true)
+![Image text](https://github.com/simkinhu/xyhelpercarlist/blob/master/quick-install/home2.jpg?raw=true)
 
 
 ## 公告配置
