@@ -5,7 +5,7 @@
       <div class="light-green" v-html="notice"></div>
     </n-gi>
   </n-grid>
-  <n-grid x-gap="10" y-gap="10" cols="1 s:3 m:4 l:5 xl:5 2xl:6" responsive="screen">
+  <n-grid x-gap="10" y-gap="10" cols="1 s:3 m:4 l:5 xl:6 2xl:6" responsive="screen">
     <n-grid-item class="cardclss" v-for="item in itemslist" :key="item.carID">
       <n-card size="small" bordered="false" content-style="box-class" content-class="box-class"
               @click="redirectTo(item.carID)">
@@ -13,11 +13,10 @@
           {{ item.label }}
         </n-button>
         <n-text class="title">{{ item.carID }}</n-text>
-
         <div class="message-with-dot" :style="{ '--dot-color': item.color }">
           状态：{{ item.message }}
+          <!--          状态：PLUS停运|将于3048秒后恢复-->
         </div>
-
       </n-card>
     </n-grid-item>
   </n-grid>
@@ -25,7 +24,6 @@
 </template>
 <style>
 #app {
-  max-width: 1000px;
   padding: 10px;
 }
 
@@ -51,8 +49,8 @@
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 10px;
-  height: 10px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
   background: var(--dot-color);
   border: 1px #c9c9c9 solid;
@@ -135,8 +133,7 @@ export default {
   },
   methods: {
     fetchData() {
-      if (!this.hasMoreData || this.isLoading) return; // 如果没有更多数据或正在加载，则不执行任何操作
-
+      if (!this.hasMoreData || this.isLoading) return;
       this.isLoading = true;
       axios.post('/carpage', {
         page: this.page,
@@ -156,18 +153,34 @@ export default {
               return fetch(requestUrl)
                   .then(response => response.json()) // 假设 endpoint 返回 JSON
                   .then(data => {
-                    // 返回修改后的 item，包括从 endpoint 获取的新数据
+                    function replaceStopRunning(text) {
+                      return text.replace("PLUS停运｜", "").replace("TEAM停运｜", "").replace("停运｜", "").replace("|", "-");
+                    }
+
+                    for (let key in data) {
+                      if (typeof data[key] === 'string') {
+                        data[key] = replaceStopRunning(data[key]);
+                      }
+                    }
                     return {...item, ...data};
                   })
                   .catch(error => {
                     console.error('Error fetching icon data:', error);
-                    return item; // 发生错误时返回未修改的 item
+                    return item;
                   });
             });
             Promise.all(promises).then(newItems => {
               this.itemslist = [...this.itemslist, ...newItems];
+              this.itemslist.sort((a, b) => {
+                if (a.isPlus === 0 && b.isPlus !== 0) {
+                  return -1;
+                } else if (a.isPlus !== 0 && b.isPlus === 0) {
+                  return 1;
+                }
+                return 0;
+              });
               this.page += 1;
-            });
+            })
           })
           .catch(error => {
             console.error('请求错误:', error);
