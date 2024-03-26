@@ -203,7 +203,7 @@ export default {
                     endpointData[key] = replaceStopRunning(endpointData[key]);
                   }
                 }
-                let bai = 100 - (statusData.count / 40) * 100;
+                let bai = 100 - (statusData.count / 100) * 100;
                 return {...item, ...endpointData, ...statusData, bai: bai.toFixed(2)}; // 将百分比保留两位小数
               });
             });
