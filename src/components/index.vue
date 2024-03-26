@@ -15,7 +15,6 @@
         <n-text class="title">{{ item.carID }}</n-text>
         <div class="message-with-dot" :style="{ '--dot-color': item.color }">
           状态：{{ item.message }}
-          <!--          状态：PLUS停运|将于3048秒后恢复-->
         </div>
       </n-card>
     </n-grid-item>
