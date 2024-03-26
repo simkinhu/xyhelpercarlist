@@ -9,13 +9,21 @@
     <n-grid-item class="cardclss" v-for="item in itemslist" :key="item.carID">
       <n-card size="small" bordered="false" content-style="box-class" content-class="box-class"
               @click="redirectTo(item.carID)">
-        <n-button text-color="white" :color="item.isPlus === 0 ? '#19c37d' : '#ab68ff'" type="tertiary" size="small">
+        <n-button text-color="white" :color="item.isPlus === false ? '#19c37d' : '#ab68ff'" type="tertiary"
+                  size="small">
           {{ item.label }}
         </n-button>
         <n-text class="title">{{ item.carID }}</n-text>
         <div class="message-with-dot" :style="{ '--dot-color': item.color }">
-          状态：{{ item.message }}
+          节点状态：{{ item.message }}
         </div>
+        <n-progress
+            type="line"
+            :show-indicator="false"
+            :color=item.color
+            :percentage=item.bai
+            rail-color="#dbdbdb"
+        />
       </n-card>
     </n-grid-item>
   </n-grid>
@@ -33,6 +41,26 @@
 .n-gradient-text {
   margin-top: 10px;
 }
+
+.n-progress {
+  margin-top: 10px;
+}
+
+.progress-container {
+  width: 100%; /* Full width */
+  background-color: #e0e0e0; /* Grey background */
+  border-radius: 5px; /* Rounded corners */
+  overflow: hidden; /* Clip the progress inside the container */
+}
+
+.progress {
+  height: 8px; /* The height of the progress bar */
+  background-color: #19c37d; /* Green background */
+  width: 0%; /* Width starting at 0% */
+  border-radius: 5px; /* Rounded corners */
+  transition: width 0.5s; /* Smooth transition for width changes */
+}
+
 
 .message-with-dot {
   margin-top: 10px;
@@ -144,30 +172,42 @@ export default {
               return;
             }
             this.notice = response.data.notice;
-            let baseUrl = window.location.origin;
+            let baseUrl = window.location.href;
             let promises = response.data.data.list.map(item => {
               let carname = encodeURIComponent(`${item.carID}`);
-              let requestUrl = `${baseUrl}/endpoint?carid=${carname}`;
-              // 对每个 item 发起请求
-              return fetch(requestUrl)
-                  .then(response => response.json()) // 假设 endpoint 返回 JSON
-                  .then(data => {
-                    function replaceStopRunning(text) {
-                      return text.replace("PLUS停运｜", "").replace("TEAM停运｜", "").replace("停运｜", "").replace("|", "-");
-                    }
+              let endpointUrl = `${baseUrl}/endpoint?carid=${carname}`;
+              let statusUrl = `${baseUrl}/status?carid=${carname}`;
 
-                    for (let key in data) {
-                      if (typeof data[key] === 'string') {
-                        data[key] = replaceStopRunning(data[key]);
-                      }
-                    }
-                    return {...item, ...data};
-                  })
+              // 并行发起 endpoint 和 status 请求
+              let endpointPromise = fetch(endpointUrl)
+                  .then(response => response.json())
                   .catch(error => {
-                    console.error('Error fetching icon data:', error);
-                    return item;
+                    console.error('Error fetching endpoint data:', error);
+                    return {};
                   });
+
+              let statusPromise = fetch(statusUrl)
+                  .then(response => response.json())
+                  .catch(error => {
+                    console.error('Error fetching status data:', error);
+                    return {};
+                  });
+
+              return Promise.all([endpointPromise, statusPromise]).then(([endpointData, statusData]) => {
+                function replaceStopRunning(text) {
+                  return text.replace("PLUS停运｜", "").replace("TEAM停运｜", "").replace("停运｜", "").replace("|", "-").replace("green","#19c37d").replace("yellow","#0f6844").replace("red","black");
+                }
+
+                for (let key in endpointData) {
+                  if (typeof endpointData[key] === 'string') {
+                    endpointData[key] = replaceStopRunning(endpointData[key]);
+                  }
+                }
+                let bai = 100 - (statusData.count / 40) * 100;
+                return {...item, ...endpointData, ...statusData, bai: bai.toFixed(2)}; // 将百分比保留两位小数
+              });
             });
+
             Promise.all(promises).then(newItems => {
               this.itemslist = [...this.itemslist, ...newItems];
               this.itemslist.sort((a, b) => {
@@ -178,6 +218,7 @@ export default {
                 }
                 return 0;
               });
+              console.log(this.itemslist);
               this.page += 1;
             })
           })
