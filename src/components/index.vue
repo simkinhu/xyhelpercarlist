@@ -142,10 +142,10 @@ export default {
     const setTheme = () => {
       const now = new Date()
       const hours = now.getHours()
-      if (hours >= 19 || hours < 7) { // 晚上19点到次日7点为深色主题
+      if (hours >= 23 || hours < 6) {
         theme.value = darkTheme
         active.value = true
-      } else { // 其他时间为浅色主题
+      } else {
         theme.value = null
         active.value = false
       }
@@ -178,29 +178,29 @@ export default {
     };
   },
 
-  mounted() {
-    const currentHour = new Date().getHours();
-    if (currentHour >= 18 || currentHour < 6) {
-      this.isDarkTheme = true;
-    }
+  created() {
     this.fetchData();
+  },
+
+  mounted() {
     window.addEventListener('scroll', this.handleScroll);
   },
   methods: {
-    fetchData() {
+    fetchData: async function() {
       if (!this.hasMoreData || this.isLoading) return;
       this.isLoading = true;
-      axios.post('/carpage', {
+      axios.post('https://free-gpt.club/carpage', {
         page: this.page,
-        size: 48
+        size: 72
       })
           .then(response => {
             if (response.data.data.list === null) {
               this.hasMoreData = false;
+              this.isLoading = false;
               return;
             }
             this.notice = response.data.notice;
-            let baseUrl = window.location.origin;
+            let baseUrl = "https://free-gpt.club/"
             let promises = response.data.data.list.map(item => {
               let carname = encodeURIComponent(`${item.carID}`);
               let endpointUrl = `${baseUrl}/endpoint?carid=${carname}`;
@@ -232,7 +232,7 @@ export default {
                       .replace("red", "black")
                       .replace("PLUS", "4.0")
                       .replace("blue", "#19c37d")
-                      .replace("purple", "#0f6844");
+                      .replace("purple", "#ff7e33");
                 }
 
                 for (let key in endpointData) {
@@ -241,45 +241,41 @@ export default {
                   }
                 }
                 let bai = statusData.count / 100;
-                return {...item, ...endpointData, ...statusData, bai: bai.toFixed(2)}; // 将百分比保留两位小数
+                return {...item, ...endpointData, ...statusData, bai: bai.toFixed(2)};
               });
             });
 
             Promise.all(promises).then(newItems => {
               this.itemslist = [...this.itemslist, ...newItems];
-              this.itemslist.sort((a, b) => {
-                if (a.isPlus === 0 && b.isPlus !== 0) {
-                  return -1;
-                } else if (a.isPlus !== 0 && b.isPlus === 0) {
-                  return 1;
-                }
-                return 0;
-              });
               this.page += 1;
-            })
+              this.isLoading = false;
+            }).catch(error => {
+              console.error('请求错误:', error);
+              this.isLoading = false;
+            });
           })
           .catch(error => {
             console.error('请求错误:', error);
-          })
-          .finally(() => {
             this.isLoading = false;
-          });
+          })
     },
     handleScroll() {
-      const nearBottomOfPage = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
-      if (nearBottomOfPage && !this.isLoading) {
+      const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      const clientHeight = document.documentElement.clientHeight;
+
+      const nearBottomOfPage = scrollTop + clientHeight >= scrollHeight - 100;
+
+      if (nearBottomOfPage && !this.isLoading && this.hasMoreData) {
         this.fetchData();
       }
     },
     redirectTo(carID) {
-      window.location.href = `${
-          window.location.origin
-      }/auth/login?carid=${encodeURI(carID)}`;
+      window.location.href = `${window.location.origin}/auth/login?carid=${encodeURI(carID)}`;
     },
     beforeDestroy() {
       window.removeEventListener('scroll', this.handleScroll);
     }
   }
 };
-
 </script>
