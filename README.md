@@ -1,8 +1,17 @@
-## 属Xyhelper下项目ChatGPT-Share-Server前端主题
+## 属Xyhelper下项目ChatGPT-Share-Server前端主题 
+> 项目地址：[chatgpt-share-server](https://github.com/xyhelper/chatgpt-share-server)
+> 
+> 感谢xyhelper大佬的辛勤付出，敬礼！！！
 
-项目地址：[chatgpt-share-server](https://github.com/xyhelper/chatgpt-share-server)
+
+
+
+
+
 
 ## 基于Naiveui制作的ChatGPT-share 前端界面，代码全开源
+
+> 开源不易，如果可以的话请给个Star小星星，感激不尽！
 
 无需编译，在 "chatgpt-share" 目录下执行以下脚本即可，源码已开源可随意更改。
 
@@ -19,7 +28,7 @@
 
 2024-03-27 增加进度条与颜色修改！
 
-2024-03-28 修改UI颜色，增加自动深浅模式，修改进度条；
+> 2024-03-28 修改UI颜色，增加自动深浅模式，修改进度条；
 
 ## 一键快速替换前端页面：
 ```shell
