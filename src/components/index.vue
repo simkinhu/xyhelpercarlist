@@ -189,7 +189,7 @@ export default {
     fetchData: async function() {
       if (!this.hasMoreData || this.isLoading) return;
       this.isLoading = true;
-      axios.post('https://free-gpt.club/carpage', {
+      axios.post('/carpage', {
         page: this.page,
         size: 72
       })
@@ -200,7 +200,7 @@ export default {
               return;
             }
             this.notice = response.data.notice;
-            let baseUrl = "https://free-gpt.club/"
+            let baseUrl = window.location.origin;
             let promises = response.data.data.list.map(item => {
               let carname = encodeURIComponent(`${item.carID}`);
               let endpointUrl = `${baseUrl}/endpoint?carid=${carname}`;
