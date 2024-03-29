@@ -48,6 +48,9 @@
     --color-heading: var(--vt-c-text-dark-1);
     --color-text: var(--vt-c-text-dark-2);
   }
+  .n-card{
+    background-color: rgb(255 255 255 / 9%);
+  }
 }
 
 *,

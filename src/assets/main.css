@@ -10,7 +10,7 @@
 .n-card {
     border-radius: 5px;
     max-width: 300px;
-    background-color: rgba(46, 51, 56, 0.09);
+    background-color:  rgb(46 51 56 / 9%);
     color: white;
 }
 .light-green {

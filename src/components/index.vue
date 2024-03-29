@@ -1,7 +1,6 @@
-<template>
+<template class="loading">
   <n-config-provider :theme="theme">
     <n-global-style/>
-
     <n-card class="notice" size="small">
       <n-switch v-model:value="active" size="small">
         <template #checked-icon>
@@ -14,32 +13,34 @@
       <div v-html="notice"></div>
     </n-card>
 
-
-    <n-grid x-gap="10" y-gap="10" cols="1 s:3 m:4 l:5 xl:6 2xl:6" responsive="screen">
-
+    <n-grid x-gap="10" y-gap="10" cols="1 s:3 m:4 l:5 xl:5 2xl:5" responsive="screen">
       <n-grid-item class="cardclss" v-for="item in itemslist" :key="item.carID">
         <n-card size="small" bordered="false" content-style="box-class" content-class="box-class"
                 @click="redirectTo(item.carID)">
           <n-text class="title">{{ item.carID }}</n-text>
-
-          <n-badge :color=item.labelColor :value=item.label :offset="[30, -12]"></n-badge>
-
+          <n-badge :color=item.labelColor :value=item.label :offset="[34, -11]"></n-badge>
           <div class="message-with-dot">
-            <a-progress size="mini" status='success' :percent=item.bai :size="mini" :color=item.color></a-progress>
-            节点状态：{{ item.message }}
+           实时状态：{{ item.message }}
           </div>
-
+          <div :style="{ width: '100%' }">
+            <a-progress animation="true" :show-text="false" :steps="6"  :color=item.color :percent="item.bai" track-color="#19c37d" stroke-width="30" />
+          </div>
         </n-card>
       </n-grid-item>
-
-
     </n-grid>
 
   </n-config-provider>
 </template>
+
+
 <style>
+
 #app {
   padding: 10px;
+}
+
+body.loading {
+  visibility: hidden;
 }
 
 .n-button {
@@ -52,7 +53,8 @@
 }
 
 .message-with-dot {
-  margin-top: 10px;
+  margin-top: 8px;
+  margin-bottom: 8px;
   position: relative;
   color: gray;
   font-size: 12px;
@@ -69,7 +71,8 @@
 }
 
 .n-badge .n-badge-sup {
-  border-radius: 5px;
+  border-radius: 2px;
+  padding: 10px 10px;
 }
 
 .box-class {
@@ -118,46 +121,64 @@
   text-align: left;
   --n-close-border-radius: 10px !important;
 }
+.arco-progress-steps-item{
+  border-radius: 3px!important;
+}
 
 </style>
 <script lang="ts">
 import axios from 'axios';
 import {darkTheme} from 'naive-ui'
 import type {GlobalTheme} from 'naive-ui'
-import {Sparkles, SunnySharp} from '@vicons/ionicons5'
+import {Airplane, LogoNodejs, Sparkles, SunnySharp} from '@vicons/ionicons5'
 
-export default {
+
+
+
+
+export default defineComponent({
   computed: {
+    LogoNodejs() {
+      return LogoNodejs
+    },
+    Airplane() {
+      return Airplane
+    },
     Sparkles() {
       return Sparkles
     },
     SunnySharp() {
       return SunnySharp
     }
+
   },
   setup() {
-    const theme = ref<GlobalTheme | null>(null)
-    const active = ref(false)
-    // 设置主题
-    const setTheme = () => {
-      const now = new Date()
-      const hours = now.getHours()
-      if (hours >= 23 || hours < 6) {
-        theme.value = darkTheme
-        active.value = true
-      } else {
-        theme.value = null
-        active.value = false
-      }
-    }
-    onMounted(() => {
-      setTheme()
-    })
+    const theme = ref<GlobalTheme | null>(null);
+    const active = ref(false);
 
-    // 监听开关改变,手动切换主题
+    // 从 localStorage 恢复主题设置
+    function restoreTheme() {
+      const storedTheme = localStorage.getItem('theme');
+      active.value = storedTheme === 'darkTheme';
+      theme.value = active.value ? darkTheme : null;
+    }
+    if (localStorage.getItem('theme') === 'darkTheme') {
+      document.documentElement.style.backgroundColor = '#333';
+      document.body.classList.add('dark-theme');
+    }
+
     watch(active, (newValue) => {
-      theme.value = newValue ? darkTheme : null
-    })
+      theme.value = newValue ? darkTheme : null;
+      localStorage.setItem('theme', theme.value ? 'darkTheme' : 'lightTheme');
+    });
+
+    // 页面加载时恢复主题
+    onMounted(() => {
+      restoreTheme();
+      document.body.classList.remove('loading');
+    });
+
+    return { theme, active, Sparkles, SunnySharp };
 
     return {
       theme,
@@ -186,9 +207,8 @@ export default {
     window.addEventListener('scroll', this.handleScroll);
   },
   methods: {
-    fetchData: async function() {
+    fetchData: async function () {
       if (!this.hasMoreData || this.isLoading) return;
-      this.isLoading = true;
       axios.post('/carpage', {
         page: this.page,
         size: 72
@@ -248,10 +268,8 @@ export default {
             Promise.all(promises).then(newItems => {
               this.itemslist = [...this.itemslist, ...newItems];
               this.page += 1;
-              this.isLoading = false;
             }).catch(error => {
               console.error('请求错误:', error);
-              this.isLoading = false;
             });
           })
           .catch(error => {
@@ -277,5 +295,5 @@ export default {
       window.removeEventListener('scroll', this.handleScroll);
     }
   }
-};
+});
 </script>
