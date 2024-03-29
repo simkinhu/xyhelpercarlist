@@ -25,6 +25,8 @@
 
 2024-03-28 修改UI颜色，增加自动深浅模式，修改进度条；
 
+2024-03-29 添加骨架屏，修改4.0提示颜色更显眼黄色；
+
 ## 一键快速替换前端页面：
 ```shell
 curl -sSfL https://raw.githubusercontent.com/simkinhu/xyhelpercarlist/master/quick-install/quick-list.sh | bash

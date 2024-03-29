@@ -2,6 +2,7 @@
   <n-config-provider :theme="theme">
     <n-global-style/>
 
+
     <n-card class="notice" size="small">
       <n-switch v-model:value="active" size="small">
         <template #checked-icon>
@@ -11,12 +12,17 @@
           <n-icon :component="SunnySharp"/>
         </template>
       </n-switch>
-      <div v-html="notice"></div>
+      <n-skeleton v-if="noticeisLoading" height="100px" width="100%" :sharp/>
+      <div v-html="notice" v-else></div>
     </n-card>
 
 
-    <n-grid x-gap="10" y-gap="10" cols="1 s:3 m:4 l:5 xl:6 2xl:6" responsive="screen">
+    <n-space vertical>
+      <n-skeleton v-if="nodeisLoading" height="80px" width="100%" :sharp="false"/>
+      <n-skeleton v-if="nodeisLoading" height="80px" width="100%" :sharp="false"/>
+    </n-space>
 
+    <n-grid x-gap="10" y-gap="10" cols="1 s:3 m:4 l:5 xl:6 2xl:6" responsive="screen">
       <n-grid-item class="cardclss" v-for="item in itemslist" :key="item.carID">
         <n-card size="small" bordered="false" content-style="box-class" content-class="box-class"
                 @click="redirectTo(item.carID)">
@@ -31,8 +37,6 @@
 
         </n-card>
       </n-grid-item>
-
-
     </n-grid>
 
   </n-config-provider>
@@ -173,6 +177,8 @@ export default {
       notice: "",
       total: 0,
       page: 1,
+      noticeisLoading: "true",
+      nodeisLoading: "true",
       isLoading: false,
       hasMoreData: true,
     };
@@ -186,7 +192,7 @@ export default {
     window.addEventListener('scroll', this.handleScroll);
   },
   methods: {
-    fetchData: async function() {
+    fetchData: async function () {
       if (!this.hasMoreData || this.isLoading) return;
       this.isLoading = true;
       axios.post('/carpage', {
@@ -200,6 +206,7 @@ export default {
               return;
             }
             this.notice = response.data.notice;
+            this.noticeisLoading = false;
             let baseUrl = window.location.origin;
             let promises = response.data.data.list.map(item => {
               let carname = encodeURIComponent(`${item.carID}`);
@@ -247,6 +254,7 @@ export default {
 
             Promise.all(promises).then(newItems => {
               this.itemslist = [...this.itemslist, ...newItems];
+              this.nodeisLoading = false;
               this.page += 1;
               this.isLoading = false;
             }).catch(error => {
