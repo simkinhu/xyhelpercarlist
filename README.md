@@ -27,7 +27,7 @@
 
 2024-03-29 添加骨架屏，修改4.0提示颜色更显眼黄色；
 
-## 一键快速替换前端页面：
+## 一键快速替换前端页面(需要进入到share的根目录执行）：
 ```shell
 curl -sSfL https://raw.githubusercontent.com/simkinhu/xyhelpercarlist/master/quick-install/quick-list.sh | bash
 ```
