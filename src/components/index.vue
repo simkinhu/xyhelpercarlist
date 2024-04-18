@@ -17,13 +17,14 @@
       <n-grid-item class="cardclss" v-for="item in itemslist" :key="item.carID">
         <n-card size="small" bordered="false" content-style="box-class" content-class="box-class"
                 @click="redirectTo(item.carID)">
+          <div class="type" :style="{ background: item.labelColor }">{{ item.label }}</div>
           <n-text class="title">{{ item.carID }}</n-text>
-          <n-badge :color=item.labelColor :value=item.label :offset="[34, -11]"></n-badge>
           <div class="message-with-dot">
-           实时状态：{{ item.message }}
+            实时状态：{{ item.message }}
           </div>
           <div :style="{ width: '100%' }">
-            <a-progress animation="true" :show-text="false" :steps="6"  :color=item.color :percent="item.bai" track-color="#19c37d" stroke-width="30" />
+            <a-progress animation="true" :show-text="false" :steps="4" :color=item.color :percent="item.bai"
+                        track-color="#43bff0" stroke-width="30"/>
           </div>
         </n-card>
       </n-grid-item>
@@ -52,9 +53,20 @@ body.loading {
   margin-top: 10px;
 }
 
+.type {
+  display: inline-block;
+  margin-right: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 5px;
+  color: #fff;
+}
+
 .message-with-dot {
-  margin-top: 8px;
-  margin-bottom: 8px;
+  display: inline-block;
+  margin-top: 5px;
+  margin-bottom: 5px;
   position: relative;
   color: gray;
   font-size: 12px;
@@ -121,8 +133,9 @@ body.loading {
   text-align: left;
   --n-close-border-radius: 10px !important;
 }
-.arco-progress-steps-item{
-  border-radius: 3px!important;
+
+.arco-progress-steps-item {
+  border-radius: 3px !important;
 }
 
 </style>
@@ -131,9 +144,6 @@ import axios from 'axios';
 import {darkTheme} from 'naive-ui'
 import type {GlobalTheme} from 'naive-ui'
 import {Airplane, LogoNodejs, Sparkles, SunnySharp} from '@vicons/ionicons5'
-
-
-
 
 
 export default defineComponent({
@@ -162,6 +172,7 @@ export default defineComponent({
       active.value = storedTheme === 'darkTheme';
       theme.value = active.value ? darkTheme : null;
     }
+
     if (localStorage.getItem('theme') === 'darkTheme') {
       document.documentElement.style.backgroundColor = '#333';
       document.body.classList.add('dark-theme');
@@ -178,7 +189,7 @@ export default defineComponent({
       document.body.classList.remove('loading');
     });
 
-    return { theme, active, Sparkles, SunnySharp };
+    return {theme, active, Sparkles, SunnySharp};
 
     return {
       theme,
@@ -209,7 +220,7 @@ export default defineComponent({
   methods: {
     fetchData: async function () {
       if (!this.hasMoreData || this.isLoading) return;
-      axios.post('/carpage', {
+      axios.post('https://3388ai.com/carpage', {
         page: this.page,
         size: 72
       })
@@ -220,7 +231,8 @@ export default defineComponent({
               return;
             }
             this.notice = response.data.notice;
-            let baseUrl = window.location.origin;
+            // let baseUrl = window.location.origin;
+            let baseUrl = "https://3388ai.com/";
             let promises = response.data.data.list.map(item => {
               let carname = encodeURIComponent(`${item.carID}`);
               let endpointUrl = `${baseUrl}/endpoint?carid=${carname}`;
@@ -247,12 +259,12 @@ export default defineComponent({
                       .replace("TEAM停运｜", "")
                       .replace("停运｜", "")
                       .replace("|", "-")
-                      .replace("green", "#19c37d")
-                      .replace("yellow", "#0f6844")
+                      .replace("green", "#2e8cb1")
+                      .replace("yellow", "#2e8cb1")
                       .replace("red", "black")
-                      .replace("PLUS", "4.0")
-                      .replace("blue", "#19c37d")
-                      .replace("purple", "#ff7e33");
+                      .replace("PLUS", "Plus")
+                      .replace("blue", "#43bff0")
+                      .replace("purple", "#ab68ff");
                 }
 
                 for (let key in endpointData) {
@@ -294,6 +306,7 @@ export default defineComponent({
     beforeDestroy() {
       window.removeEventListener('scroll', this.handleScroll);
     }
+
   }
 });
 </script>
