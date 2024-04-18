@@ -27,6 +27,8 @@
 
 2024-03-29 添加骨架屏，修改4.0提示颜色更显眼黄色；
 
+2024-04-19 高仿伊利斯，伊利斯UI，行业设计标杆哇！
+
 ## 一键快速替换前端页面(需要进入到share的根目录执行）：
 ```shell
 curl -sSfL https://raw.githubusercontent.com/simkinhu/xyhelpercarlist/master/quick-install/quick-list.sh | bash

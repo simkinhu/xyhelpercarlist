@@ -13,20 +13,19 @@
       <div v-html="notice"></div>
     </n-card>
 
-    <n-grid x-gap="10" y-gap="10" cols="1 s:3 m:4 l:5 xl:5 2xl:5" responsive="screen">
+    <n-grid x-gap="10" y-gap="10" cols="2 s:3 m:4 l:5 xl:5 2xl:5" responsive="screen">
       <n-grid-item class="cardclss" v-for="item in itemslist" :key="item.carID">
-        <n-card size="small" bordered="false" content-style="box-class" content-class="box-class"
-                @click="redirectTo(item.carID)">
-          <div class="type" :style="{ background: item.labelColor }">{{ item.label }}</div>
-          <n-text class="title">{{ item.carID }}</n-text>
-          <div class="message-with-dot">
-            实时状态：{{ item.message }}
-          </div>
-          <div :style="{ width: '100%' }">
-            <a-progress animation="true" :show-text="false" :steps="4" :color=item.color :percent="item.bai"
-                        track-color="#43bff0" stroke-width="30"/>
-          </div>
-        </n-card>
+
+        <n-card size="small" bordered="false" content-style="boxclass" :content-class="'boxclass ' + (item.isPlus ? 'pluscolor' : 'nopluscolor')" @click="redirectTo(item.carID)">
+        <div class="type" :style="{ background: item.labelColor }">{{ item.label }}</div>
+            <n-text class="title">{{ item.carID }}</n-text>
+            <div class="message-with-dot">
+              实时状态：{{ item.message }}</div>
+            <div :style="{ width: '100%' }">
+              <a-progress animation="true" :show-text="false" :steps="4" :color=item.color :percent="item.bai" track-color="#24d4ae" stroke-width="30"/>
+            </div>
+          </n-card>
+
       </n-grid-item>
     </n-grid>
 
@@ -35,15 +34,6 @@
 
 
 <style>
-
-#app {
-  padding: 10px;
-}
-
-body.loading {
-  visibility: hidden;
-}
-
 .n-button {
   border-radius: 7px;
   float: right;
@@ -57,7 +47,7 @@ body.loading {
   display: inline-block;
   margin-right: 5px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
   padding: 1px 6px;
   border-radius: 5px;
   color: #fff;
@@ -65,20 +55,15 @@ body.loading {
 
 .message-with-dot {
   display: inline-block;
-  margin-top: 5px;
+  margin-top: 10px;
   margin-bottom: 5px;
   position: relative;
-  color: gray;
-  font-size: 12px;
+  color: #8f8f8f;
+  font-size: 13px;
 }
 
 .n-switch {
   top: 0;
-
-  float: right;
-}
-
-.n-badge {
   float: right;
 }
 
@@ -87,23 +72,21 @@ body.loading {
   padding: 10px 10px;
 }
 
-.box-class {
+.boxclass {
   border-radius: 10px !important;
+  border: 3px solid transparent;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
-.box-class .status {
-  margin-top: 10px;
-}
-
-.box-class:hover {
+.boxclass:hover {
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.n-button {
-  width: 50px;
-  height: 20px;
-  line-height: 20px;
-  font-size: 10px;
+.pluscolor:hover{
+  border: 3px solid #a07be6;
+}
+.nopluscolor:hover{
+  border: 3px solid #24d4ae;
 }
 
 .cardclss .title {
@@ -115,12 +98,6 @@ body.loading {
   color: var(--n-title-text-color);
   border-radius: 10px !important;
   margin-bottom: 20px;
-}
-
-.light-green {
-  padding: 20px;
-  border-radius: 10px;
-  background: none;
 }
 
 .cardclss {
@@ -135,19 +112,37 @@ body.loading {
 }
 
 .arco-progress-steps-item {
-  border-radius: 3px !important;
+  border-radius: 30px !important;
 }
-
 </style>
+
+
 <script lang="ts">
 import axios from 'axios';
 import {darkTheme} from 'naive-ui'
 import type {GlobalTheme} from 'naive-ui'
-import {Airplane, LogoNodejs, Sparkles, SunnySharp} from '@vicons/ionicons5'
+import { Sparkles, SunnySharp} from '@vicons/ionicons5'
 
 
 export default defineComponent({
+  data() {
+    return {
+      itemslist: [],
+      itemsplus: [],
+      notice: "",
+      total: 0,
+      page: 1,
+      isLoading: false,
+      hasMoreData: true
+    };
+  },
   computed: {
+    AccessibilitySharp() {
+      return AccessibilitySharp
+    },
+    GameController() {
+      return GameController
+    },
     LogoNodejs() {
       return LogoNodejs
     },
@@ -159,25 +154,20 @@ export default defineComponent({
     },
     SunnySharp() {
       return SunnySharp
-    }
-
+    },
   },
   setup() {
     const theme = ref<GlobalTheme | null>(null);
     const active = ref(false);
-
-    // 从 localStorage 恢复主题设置
     function restoreTheme() {
       const storedTheme = localStorage.getItem('theme');
       active.value = storedTheme === 'darkTheme';
       theme.value = active.value ? darkTheme : null;
     }
-
     if (localStorage.getItem('theme') === 'darkTheme') {
       document.documentElement.style.backgroundColor = '#333';
       document.body.classList.add('dark-theme');
     }
-
     watch(active, (newValue) => {
       theme.value = newValue ? darkTheme : null;
       localStorage.setItem('theme', theme.value ? 'darkTheme' : 'lightTheme');
@@ -188,26 +178,13 @@ export default defineComponent({
       restoreTheme();
       document.body.classList.remove('loading');
     });
-
     return {theme, active, Sparkles, SunnySharp};
-
     return {
       theme,
       active,
       Sparkles,
       SunnySharp
     }
-  },
-  data() {
-    return {
-      itemslist: [],
-      itemsplus: [],
-      notice: "",
-      total: 0,
-      page: 1,
-      isLoading: false,
-      hasMoreData: true,
-    };
   },
 
   created() {
@@ -258,12 +235,13 @@ export default defineComponent({
                       .replace("TEAM停运｜", "")
                       .replace("停运｜", "")
                       .replace("|", "-")
-                      .replace("green", "#2e8cb1")
-                      .replace("yellow", "#2e8cb1")
+                      .replace("grey","#525252")
+                      .replace("green", "#f9bd5f")
+                      .replace("yellow", "#f65e5d")
                       .replace("red", "black")
                       .replace("PLUS", "Plus")
-                      .replace("blue", "#43bff0")
-                      .replace("purple", "#ab68ff");
+                      .replace("blue", "#24d4ae")
+                      .replace("purple", "#a07be6");
                 }
 
                 for (let key in endpointData) {
@@ -271,7 +249,7 @@ export default defineComponent({
                     endpointData[key] = replaceStopRunning(endpointData[key]);
                   }
                 }
-                let bai = statusData.count / 100;
+                let bai = (statusData.count / 40) * 1;
                 return {...item, ...endpointData, ...statusData, bai: bai.toFixed(2)};
               });
             });

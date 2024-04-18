@@ -1,8 +1,9 @@
 @import './base.css';
 #app{
+    padding: 10px;
     max-width: 1200px;
     margin: 0 auto;
-    margin-top: 50px;
+    margin-top: 10px;
 }
 .plusicon{
     margin-bottom: 10px;
@@ -20,10 +21,10 @@
 .cardclss{
     text-align: center;
 }
-.cardclss:hover{
-    background: rgba(0, 128, 0, 0.12);
-    border-radius: 10px;
-}
+
 .total{
     margin-top: 25px;
+}
+body.loading {
+    visibility: hidden;
 }
