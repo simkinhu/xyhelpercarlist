@@ -220,7 +220,7 @@ export default defineComponent({
   methods: {
     fetchData: async function () {
       if (!this.hasMoreData || this.isLoading) return;
-      axios.post('https://3388ai.com/carpage', {
+      axios.post('/carpage', {
         page: this.page,
         size: 72
       })
@@ -231,8 +231,7 @@ export default defineComponent({
               return;
             }
             this.notice = response.data.notice;
-            // let baseUrl = window.location.origin;
-            let baseUrl = "https://3388ai.com/";
+            let baseUrl = window.location.origin;
             let promises = response.data.data.list.map(item => {
               let carname = encodeURIComponent(`${item.carID}`);
               let endpointUrl = `${baseUrl}/endpoint?carid=${carname}`;
