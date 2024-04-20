@@ -20,12 +20,14 @@
 
           <div class="type" :style="{ background: item.labelColor }">{{ item.label }}</div>
 
-          <div class="cartitle"><n-text class="title">{{ item.carID }}</n-text></div>
+          <div class="cartitle">
+            <n-text class="title">{{ item.carID }}</n-text>
+          </div>
 
           <div class="message-with-dot">实时状态：{{ item.message }}</div>
 
           <div :style="{ width: '100%' }">
-            <a-progress :show-text="false" :steps="4" :color=item.color :percent="item.bai"  :track-color="(item.labelColor)" stroke-width='30'/>
+            <a-progress :show-text="false" :steps="4" :color=item.color :percent="item.bai" :track-color="(item.labelColor)" stroke-width='30'/>
           </div>
 
         </n-card>
@@ -56,12 +58,12 @@
   border-radius: 5px;
   color: #fff;
 }
-.cartitle{
+
+.cartitle {
   display: inline-block;
 }
 
 .message-with-dot {
-  display: inline-block;
   margin-top: 10px;
   margin-bottom: 5px;
   position: relative;
@@ -238,7 +240,6 @@ export default defineComponent({
                       console.error('Error fetching status data:', error);
                       return {};
                     });
-
                 return Promise.all([endpointPromise, statusPromise]).then(([endpointData, statusData]) => {
                   function replaceStopRunning(text) {
                     return text.replace("PLUS停运｜", "")
@@ -279,16 +280,14 @@ export default defineComponent({
             console.error('请求错误:', error);
           })
           .finally(() => {
-            this.isLoading = false;  // 加载结束，设置为false
+            this.isLoading = false;
           })
     },
     handleScroll() {
       const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
       const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
       const clientHeight = document.documentElement.clientHeight;
-
       const nearBottomOfPage = scrollTop + clientHeight >= scrollHeight - 100;
-
       if (nearBottomOfPage && !this.isLoading && this.hasMoreData) {
         this.fetchData();
       }
