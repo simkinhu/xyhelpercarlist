@@ -20,7 +20,7 @@
 
           <div class="type" :style="{ background: item.labelColor }">{{ item.label }}</div>
 
-          <div><n-text class="title">{{ item.carID }}</n-text></div>
+          <div class="cartitle"><n-text class="title">{{ item.carID }}</n-text></div>
 
           <div class="message-with-dot">实时状态：{{ item.message }}</div>
 
@@ -55,6 +55,9 @@
   padding: 1px 6px;
   border-radius: 5px;
   color: #fff;
+}
+.cartitle{
+  display: inline-block;
 }
 
 .message-with-dot {
@@ -204,74 +207,79 @@ export default defineComponent({
   methods: {
     fetchData: async function () {
       if (!this.hasMoreData || this.isLoading) return;
+      this.isLoading = true; // 开始加载，设置为true
       axios.post('/carpage', {
         page: this.page,
-        size: 72
+        size: 50
       })
           .then(response => {
             if (response.data.data.list === null) {
               this.hasMoreData = false;
               this.isLoading = false;
-              return;
-            }
-            this.notice = response.data.notice;
-            let baseUrl = window.location.origin;
-            let promises = response.data.data.list.map(item => {
-              let carname = encodeURIComponent(`${item.carID}`);
-              let endpointUrl = `${baseUrl}/endpoint?carid=${carname}`;
-              let statusUrl = `${baseUrl}/status?carid=${carname}`;
+            } else {
+              this.notice = response.data.notice;
+              let baseUrl = window.location.origin;
+              let promises = response.data.data.list.map(item => {
+                let carname = encodeURIComponent(`${item.carID}`);
+                let endpointUrl = `${baseUrl}/endpoint?carid=${carname}`;
+                let statusUrl = `${baseUrl}/status?carid=${carname}`;
 
-              // 并行发起 endpoint 和 status 请求
-              let endpointPromise = fetch(endpointUrl)
-                  .then(response => response.json())
-                  .catch(error => {
-                    console.error('Error fetching endpoint data:', error);
-                    return {};
-                  });
+                // 并行发起 endpoint 和 status 请求
+                let endpointPromise = fetch(endpointUrl)
+                    .then(response => response.json())
+                    .catch(error => {
+                      console.error('Error fetching endpoint data:', error);
+                      return {};
+                    });
 
-              let statusPromise = fetch(statusUrl)
-                  .then(response => response.json())
-                  .catch(error => {
-                    console.error('Error fetching status data:', error);
-                    return {};
-                  });
+                let statusPromise = fetch(statusUrl)
+                    .then(response => response.json())
+                    .catch(error => {
+                      console.error('Error fetching status data:', error);
+                      return {};
+                    });
 
-              return Promise.all([endpointPromise, statusPromise]).then(([endpointData, statusData]) => {
-                function replaceStopRunning(text) {
-                  return text.replace("PLUS停运｜", "")
-                      .replace("TEAM停运｜", "")
-                      .replace("停运｜", "")
-                      .replace("|", "-")
-                      .replace("grey", "#525252")
-                      .replace("green", "#f9bd5f")
-                      .replace("yellow", "#f65e5d")
-                      .replace("red", "black")
-                      .replace("PLUS", "Plus")
-                      .replace("blue", "#24d4ae")
-                      .replace("purple", "#a07be6");
-                }
-
-                for (let key in endpointData) {
-                  if (typeof endpointData[key] === 'string') {
-                    endpointData[key] = replaceStopRunning(endpointData[key]);
+                return Promise.all([endpointPromise, statusPromise]).then(([endpointData, statusData]) => {
+                  function replaceStopRunning(text) {
+                    return text.replace("PLUS停运｜", "")
+                        .replace("TEAM停运｜", "")
+                        .replace("停运｜", "")
+                        .replace("|", "-")
+                        .replace("grey", "#525252")
+                        .replace("green", "#f9bd5f")
+                        .replace("yellow", "#f65e5d")
+                        .replace("red", "black")
+                        .replace("PLUS", "Plus")
+                        .replace("blue", "#24d4ae")
+                        .replace("purple", "#a07be6");
                   }
-                }
-                let loadbai = item.isPlus == true ? (statusData.count / 80) * 1 : (statusData.count / 500) * 1;
-                let bai = loadbai > 0.2 ? loadbai : 0;
-                return {...item, ...endpointData, ...statusData, bai: bai.toFixed(5)};
-              });
-            });
 
-            Promise.all(promises).then(newItems => {
-              this.itemslist = [...this.itemslist, ...newItems];
-              this.page += 1;
-            }).catch(error => {
-              console.error('请求错误:', error);
-            });
+                  for (let key in endpointData) {
+                    if (typeof endpointData[key] === 'string') {
+                      endpointData[key] = replaceStopRunning(endpointData[key]);
+                    }
+                  }
+                  let loadbai = item.isPlus == true ? (statusData.count / 80) * 1 : (statusData.count / 500) * 1;
+                  let bai = loadbai > 0.2 ? loadbai : 0;
+                  return {...item, ...endpointData, ...statusData, bai: bai.toFixed(5)};
+                });
+              });
+
+              Promise.all(promises).then(newItems => {
+                const existingIds = new Set(this.itemslist.map(item => item.carID));
+                const filteredItems = newItems.filter(item => !existingIds.has(item.carID));
+                this.itemslist = [...this.itemslist, ...filteredItems];
+                this.page += 1;  // 成功加载后，增加页数
+              }).catch(error => {
+                console.error('请求错误:', error);
+              });
+            }
           })
           .catch(error => {
             console.error('请求错误:', error);
-            this.isLoading = false;
+          })
+          .finally(() => {
+            this.isLoading = false;  // 加载结束，设置为false
           })
     },
     handleScroll() {
