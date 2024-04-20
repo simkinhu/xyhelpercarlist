@@ -20,7 +20,7 @@
 
           <div class="type" :style="{ background: item.labelColor }">{{ item.label }}</div>
 
-          <n-text class="title">{{ item.carID }}</n-text>
+          <div><n-text class="title">{{ item.carID }}</n-text></div>
 
           <div class="message-with-dot">实时状态：{{ item.message }}</div>
 
@@ -256,7 +256,7 @@ export default defineComponent({
                     endpointData[key] = replaceStopRunning(endpointData[key]);
                   }
                 }
-                let loadbai = item.isPlus == true ? (statusData.count / 40) * 1 : (statusData.count / 500) * 1;
+                let loadbai = item.isPlus == true ? (statusData.count / 80) * 1 : (statusData.count / 500) * 1;
                 let bai = loadbai > 0.2 ? loadbai : 0;
                 return {...item, ...endpointData, ...statusData, bai: bai.toFixed(5)};
               });
