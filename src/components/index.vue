@@ -248,8 +248,8 @@ export default defineComponent({
                         .replace("|", "-")
                         .replace("grey", "#525252")
                         .replace("green", "#f9bd5f")
-                        .replace("yellow", "#f65e5d")
-                        .replace("red", "black")
+                        .replace("yellow", "#f9bd5f")
+                        .replace("red", "#f65e5d")
                         .replace("PLUS", "Plus")
                         .replace("blue", "#24d4ae")
                         .replace("purple", "#a07be6");
@@ -270,7 +270,7 @@ export default defineComponent({
                 const existingIds = new Set(this.itemslist.map(item => item.carID));
                 const filteredItems = newItems.filter(item => !existingIds.has(item.carID));
                 this.itemslist = [...this.itemslist, ...filteredItems];
-                this.page += 1;  // 成功加载后，增加页数
+                this.page += 1;
               }).catch(error => {
                 console.error('请求错误:', error);
               });
