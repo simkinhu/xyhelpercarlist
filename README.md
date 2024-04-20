@@ -29,9 +29,6 @@
 ```shell
 curl -sSfL https://raw.githubusercontent.com/simkinhu/xyhelpercarlist/master/quick-install/quick-list.sh | bash
 ```
-## 演示站
-演示站：[3377ai.com](https://3377ai.com/)
-
 
 ## 公告配置
 在管理后台-系统设置-参数配置-参数列表中新增参数notice，值为公告内容，支持 html 标签
