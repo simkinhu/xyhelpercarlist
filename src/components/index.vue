@@ -13,18 +13,22 @@
       <div v-html="notice"></div>
     </n-card>
 
-    <n-grid x-gap="10" y-gap="10" cols="2 s:3 m:4 l:5 xl:5 2xl:5" responsive="screen">
+    <n-grid x-gap="10" y-gap="10" cols="2 s:3 m:4 l:5 xl:5 2xl:6" responsive="screen">
       <n-grid-item class="cardclss" v-for="item in itemslist" :key="item.carID">
 
-        <n-card size="small" bordered="false" content-style="boxclass" :content-class="'boxclass ' + (item.isPlus ? 'pluscolor' : 'nopluscolor')" @click="redirectTo(item.carID)">
-        <div class="type" :style="{ background: item.labelColor }">{{ item.label }}</div>
-            <n-text class="title">{{ item.carID }}</n-text>
-            <div class="message-with-dot">
-              实时状态：{{ item.message }}</div>
-            <div :style="{ width: '100%' }">
-              <a-progress animation="true" :show-text="false" :steps="4" :color=item.color :percent="item.bai" track-color="#24d4ae" stroke-width="30"/>
-            </div>
-          </n-card>
+        <n-card size="small" content-style="boxclass" :content-class="'boxclass ' + (item.isPlus ? 'pluscolor' : 'nopluscolor')" @click="redirectTo(item.carID)">
+
+          <div class="type" :style="{ background: item.labelColor }">{{ item.label }}</div>
+
+          <n-text class="title">{{ item.carID }}</n-text>
+
+          <div class="message-with-dot">实时状态：{{ item.message }}</div>
+
+          <div :style="{ width: '100%' }">
+            <a-progress :show-text="false" :steps="4" :color=item.color :percent="item.bai"  :track-color="(item.labelColor)" stroke-width='30'/>
+          </div>
+
+        </n-card>
 
       </n-grid-item>
     </n-grid>
@@ -82,10 +86,11 @@
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.pluscolor:hover{
+.pluscolor:hover {
   border: 3px solid #a07be6;
 }
-.nopluscolor:hover{
+
+.nopluscolor:hover {
   border: 3px solid #24d4ae;
 }
 
@@ -121,7 +126,7 @@
 import axios from 'axios';
 import {darkTheme} from 'naive-ui'
 import type {GlobalTheme} from 'naive-ui'
-import { Sparkles, SunnySharp} from '@vicons/ionicons5'
+import {Sparkles, SunnySharp} from '@vicons/ionicons5'
 
 
 export default defineComponent({
@@ -159,11 +164,13 @@ export default defineComponent({
   setup() {
     const theme = ref<GlobalTheme | null>(null);
     const active = ref(false);
+
     function restoreTheme() {
       const storedTheme = localStorage.getItem('theme');
       active.value = storedTheme === 'darkTheme';
       theme.value = active.value ? darkTheme : null;
     }
+
     if (localStorage.getItem('theme') === 'darkTheme') {
       document.documentElement.style.backgroundColor = '#333';
       document.body.classList.add('dark-theme');
@@ -235,7 +242,7 @@ export default defineComponent({
                       .replace("TEAM停运｜", "")
                       .replace("停运｜", "")
                       .replace("|", "-")
-                      .replace("grey","#525252")
+                      .replace("grey", "#525252")
                       .replace("green", "#f9bd5f")
                       .replace("yellow", "#f65e5d")
                       .replace("red", "black")
@@ -249,8 +256,9 @@ export default defineComponent({
                     endpointData[key] = replaceStopRunning(endpointData[key]);
                   }
                 }
-                let bai = (statusData.count / 40) * 1;
-                return {...item, ...endpointData, ...statusData, bai: bai.toFixed(2)};
+                let loadbai = item.isPlus == true ? (statusData.count / 40) * 1 : (statusData.count / 500) * 1;
+                let bai = loadbai > 0.2 ? loadbai : 0;
+                return {...item, ...endpointData, ...statusData, bai: bai.toFixed(5)};
               });
             });
 
