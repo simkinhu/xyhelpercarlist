@@ -18,7 +18,7 @@
 
         <n-card size="small" content-style="boxclass" :content-class="'boxclass ' + (item.isPlus ? 'pluscolor' : 'nopluscolor')" @click="redirectTo(item.carID)">
 
-          <div class="type" :style="{ background: item.labelColor }">{{ item.label }}</div>
+          <div class="type" :style="{ background: item.labelColor }">{{ item.label != ""? item.label: "NO" }}</div>
 
           <div class="cartitle">
             <n-text class="title">{{ item.carID }}</n-text>
@@ -246,7 +246,6 @@ export default defineComponent({
                         .replace("TEAM停运｜", "")
                         .replace("停运｜", "")
                         .replace("|", "-")
-                        .replace("grey", "#525252")
                         .replace("green", "#f9bd5f")
                         .replace("yellow", "#f9bd5f")
                         .replace("red", "#f65e5d")
