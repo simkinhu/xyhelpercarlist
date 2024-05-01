@@ -13,13 +13,13 @@ export default ({ mode }) => {
         server: {
             proxy: {
                 '/carpage': {
-                    target: 'http://47.76.135.99:8310',
+                    target: 'http://127.0.0.1:8300',
                     changeOrigin: true,
                     ws: true,
                     rewrite: path => path.replace(/^\/carpage/, '/api/list')
                 },
                 '/carpages': {
-                    target: 'http://47.76.135.99:8300',
+                    target: 'http://127.0.0.1:8300',
                     changeOrigin: true,
                     ws: true,
                     rewrite: path => path.replace(/^\/carpages/, '/carpages')
