@@ -27,7 +27,7 @@
 - 支付通道:支持微信官方支付、支付宝官方支付以及易支付，满足不同用户的支付需求;
 - 收费模式：根据3.5和4.0实行分别收费策略;
 - 兑换码：支持发放体验卡，体验卡兑换不能叠加;
-- 
+
 详细介绍请参阅 [ShareFlow Admin 付费版介绍](https://mxlizdp0t8q.feishu.cn/docx/NjBZdHwr9ocMJMxOmXlcVxCqn0f?from=from_copylink)
 
 ### 演示站
