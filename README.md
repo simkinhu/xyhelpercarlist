@@ -8,7 +8,7 @@
 默认加载48条数据，下拉滚动加载，/src/components/index.vue 第45行可自行更改加载条数。
 提示：执行过后list目录下都会删除，请做好备份，docker有无映射目录都不影响。
 
-## ShareFlow Admin（付费版本）
+## ShareFlow Admin（付费，生活不易也接付费定制）
 
 ### 技术架构
 - **后端**：JAVA （JDK17）
